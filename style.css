@@ -320,13 +320,13 @@ main {
 }
 
 .modal-header {
-  position: fixed; 
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 2000; 
+  z-index: 2000;
 
-  background-color: rgba(15, 23, 42, 0.95); 
+  background-color: rgba(15, 23, 42, 0.95);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
   padding: 15px;
@@ -335,16 +335,16 @@ main {
   gap: 15px;
 
   transition: transform 0.3s ease-in-out;
-  transform: translateY(0); 
+  transform: translateY(0);
 }
 
 .modal-header.header-hidden {
-  transform: translateY(-100%); 
+  transform: translateY(-100%);
 }
 
 .modal-content {
-  padding-top: 70px; 
-  padding-bottom: 80px; 
+  padding-top: 70px;
+  padding-bottom: 80px;
   height: 100%;
   overflow-y: auto;
   background-color: var(--bg-dark);
@@ -1142,4 +1142,3 @@ footer {
 .nav-item:active {
   transform: scale(0.9);
 }
-
