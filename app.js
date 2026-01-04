@@ -316,9 +316,22 @@ async function fetchGenres() {
   try {
     const res = await fetch(`${BASE_URL}/comic/bacakomik/genres`);
     const json = await res.json();
-    if (json.success && json.genres) renderGenres(json.genres);
-    else genreContainer.innerHTML = "";
+
+    if (json.success && json.genres) {
+      const blacklist = ["adult", "smut", "ecchi", "mature", "18+"];
+
+      const safeGenres = json.genres.filter((genre) => {
+        const genreSlug = genre.slug.toLowerCase();
+
+        return !blacklist.includes(genreSlug);
+      });
+
+      renderGenres(safeGenres);
+    } else {
+      genreContainer.innerHTML = "";
+    }
   } catch (err) {
+    console.error(err);
     genreContainer.innerHTML = "";
   }
 }
@@ -604,10 +617,11 @@ async function fetchChapterImages(slug) {
   if (currentComicData) saveHistory(currentComicData, slug);
 
   modalContent.scrollTop = 0;
-  modalContent.innerHTML = '<div class="loading">Memuat Gambar...</div>';
+  modalContent.innerHTML =
+    '<div class="loading" style="padding-top:50px;">Memuat Gambar...</div>';
 
   const modalHeader = document.querySelector(".modal-header");
-  modalHeader.classList.remove("header-hidden");
+  if (modalHeader) modalHeader.classList.remove("header-hidden");
 
   const simpleTitle = slug.split("-").pop();
   modalTitle.innerText = `Ch. ${simpleTitle}`;
@@ -623,7 +637,7 @@ async function fetchChapterImages(slug) {
 
     let htmlImages = `<div class="reader-container">`;
     images.forEach((imgUrl) => {
-      htmlImages += `<img src="${imgUrl}" class="reader-img" loading="lazy" alt="Page">`;
+      htmlImages += `<img src="${imgUrl}" class="reader-img chapter-img" loading="lazy" alt="Page">`;
     });
 
     const nav = json.navigation;
@@ -640,21 +654,37 @@ async function fetchChapterImages(slug) {
 
     modalContent.innerHTML = htmlImages;
 
+    const savedPosition = localStorage.getItem("scroll_" + slug);
+    if (savedPosition) {
+      setTimeout(() => {
+        modalContent.scrollTo({
+          top: parseInt(savedPosition),
+          behavior: "smooth",
+        });
+      }, 600);
+    }
+
     const navBar = document.getElementById("floatingNav");
     let isScrolling;
+    let saveScrollTimer;
 
     modalContent.onscroll = () => {
-
       navBar.classList.add("nav-hidden");
-      modalHeader.classList.add("header-hidden"); 
+      if (modalHeader) modalHeader.classList.add("header-hidden");
 
       window.clearTimeout(isScrolling);
-
       isScrolling = setTimeout(() => {
         navBar.classList.remove("nav-hidden");
-        modalHeader.classList.remove("header-hidden"); 
-
+        if (modalHeader) modalHeader.classList.remove("header-hidden");
       }, 600);
+
+      window.clearTimeout(saveScrollTimer);
+      saveScrollTimer = setTimeout(() => {
+        const currentPos = modalContent.scrollTop;
+        if (currentPos > 100) {
+          localStorage.setItem("scroll_" + slug, currentPos);
+        }
+      }, 500);
     };
   } catch (err) {
     modalContent.innerHTML = `<div class="loading">Gagal memuat chapter.<br><small>${err.message}</small></div>`;
@@ -734,4 +764,3 @@ closeModal.addEventListener("click", () => {
 });
 
 document.addEventListener("DOMContentLoaded", initApp);
-
