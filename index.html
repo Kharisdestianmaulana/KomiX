@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="theme-color" content="#0f172a" />
+    <title>KomiX</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="logo">Komi<span class="logo-x">X</span></div>
+      <button id="refreshBtn" class="icon-btn">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+    </header>
+
+    <main>
+      <div id="home-view">
+        <div class="search-wrapper">
+          <input
+            type="text"
+            id="searchInput"
+            class="search-input"
+            placeholder="Cari komik (contoh: One Piece)..."
+          />
+          <button id="searchBtn" class="search-icon-btn">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+        </div>
+
+        <div class="section-header">
+          <h3>
+            <i class="fa-solid fa-fire" style="color: #f59e0b"></i> Top Komik
+          </h3>
+        </div>
+        <div id="top-comic-container" class="horizontal-scroll">
+          <div class="loading-mini">Memuat...</div>
+        </div>
+
+        <div class="section-header">
+          <h3>
+            <i class="fa-solid fa-thumbs-up" style="color: #84cc16"></i>
+            Rekomendasi
+          </h3>
+        </div>
+        <div id="recommended-container" class="horizontal-scroll">
+          <div class="loading-mini">Memuat...</div>
+        </div>
+
+        <div class="section-header">
+          <h3><i class="fa-solid fa-tags" style="color: #10b981"></i> Genre</h3>
+        </div>
+        <div id="genre-container" class="genre-scroll">
+          <div class="loading-mini">...</div>
+        </div>
+
+        <div class="section-header">
+          <h3>
+            <i class="fa-solid fa-bolt" style="color: #38bdf8"></i> Update
+            Terbaru
+          </h3>
+        </div>
+        <div id="comic-container" class="grid-container">
+          <div class="loading">Memuat Komik...</div>
+        </div>
+
+        <div
+          id="loadMoreContainer"
+          class="load-more-wrapper"
+          style="display: none"
+        >
+          <button id="loadMoreBtn" class="btn-load-more">
+            Lihat Lainnya <i class="fa-solid fa-angle-down"></i>
+          </button>
+        </div>
+
+        <div class="section-header">
+          <h3>
+            <i class="fa-solid fa-layer-group" style="color: #a78bfa"></i>
+            Berdasarkan Tipe
+          </h3>
+        </div>
+        <div class="type-grid">
+          <div class="type-card manga" onclick="fetchComicsByType('manga')">
+            <i class="fa-solid fa-book-open"></i><span>Manga</span>
+          </div>
+          <div class="type-card manhwa" onclick="fetchComicsByType('manhwa')">
+            <i class="fa-solid fa-khanda"></i><span>Manhwa</span>
+          </div>
+          <div class="type-card manhua" onclick="fetchComicsByType('manhua')">
+            <i class="fa-solid fa-scroll"></i><span>Manhua</span>
+          </div>
+        </div>
+
+        <div style="height: 20px"></div>
+        <footer>
+          <div class="footer-content">
+            <div class="footer-logo">Komi<span class="logo-x">X</span></div>
+            <p class="footer-bottom">&copy; 2026 KomiX Project.</p>
+          </div>
+        </footer>
+      </div>
+
+      <div id="history-view" style="display: none">
+        <div class="section-header" style="margin-top: 10px">
+          <h3>
+            <i class="fa-solid fa-clock-rotate-left" style="color: #f59e0b"></i>
+            Riwayat Baca
+          </h3>
+        </div>
+        <div id="history-container" class="grid-container"></div>
+      </div>
+
+      <div id="favorite-view" style="display: none">
+        <div class="section-header" style="margin-top: 10px">
+          <h3>
+            <i class="fa-solid fa-heart" style="color: #ef4444"></i> Favorit
+            Saya
+          </h3>
+        </div>
+        <div id="favorite-container" class="grid-container"></div>
+      </div>
+
+      <div style="height: 80px"></div>
+    </main>
+
+    <nav class="bottom-nav">
+      <div class="nav-item" id="navHistory">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <span>Riwayat</span>
+      </div>
+      <div class="nav-item active" id="navHome">
+        <i class="fa-solid fa-house"></i>
+        <span>Home</span>
+      </div>
+      <div class="nav-item" id="navFav">
+        <i class="fa-solid fa-heart"></i>
+        <span>Favorit</span>
+      </div>
+    </nav>
+
+    <div id="comicModal" class="modal">
+      <div class="modal-header">
+        <button id="closeModal"><i class="fa-solid fa-arrow-left"></i></button>
+        <span id="modalTitle" class="modal-title-top">Judul Komik</span>
+      </div>
+      <div class="modal-content" id="modalContent"></div>
+    </div>
+
+    <button id="scrollTopBtn" class="scroll-top-btn">
+      <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+    <script src="app.js"></script>
+  </body>
+</html>
