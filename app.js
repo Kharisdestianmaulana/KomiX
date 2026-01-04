@@ -602,21 +602,30 @@ async function fetchChapterImages(slug) {
   if (!slug) return;
   isReading = true;
   if (currentComicData) saveHistory(currentComicData, slug);
+
   modalContent.scrollTop = 0;
   modalContent.innerHTML = '<div class="loading">Memuat Gambar...</div>';
+
+  const modalHeader = document.querySelector(".modal-header");
+  modalHeader.classList.remove("header-hidden");
+
   const simpleTitle = slug.split("-").pop();
   modalTitle.innerText = `Ch. ${simpleTitle}`;
+
   try {
     const res = await fetch(`${BASE_URL}/comic/bacakomik/chapter/${slug}`);
     const json = await res.json();
     const images = json.images;
+
     if (!images || images.length === 0)
       throw new Error("Gambar tidak ditemukan.");
     if (json.title) modalTitle.innerText = json.title;
+
     let htmlImages = `<div class="reader-container">`;
     images.forEach((imgUrl) => {
       htmlImages += `<img src="${imgUrl}" class="reader-img" loading="lazy" alt="Page">`;
     });
+
     const nav = json.navigation;
     let prevBtn =
       nav && nav.prev
@@ -626,15 +635,25 @@ async function fetchChapterImages(slug) {
       nav && nav.next
         ? `<button class="nav-float-btn" onclick="fetchChapterImages('${nav.next}')">Next <i class="fa-solid fa-chevron-right"></i></button>`
         : `<button class="nav-float-btn disabled">Next <i class="fa-solid fa-chevron-right"></i></button>`;
+
     htmlImages += `</div><div id="floatingNav" class="reader-nav-floating">${prevBtn}<div class="nav-divider"></div>${nextBtn}</div><div style="height:80px; background:#000;"></div>`;
+
     modalContent.innerHTML = htmlImages;
+
     const navBar = document.getElementById("floatingNav");
     let isScrolling;
+
     modalContent.onscroll = () => {
+
       navBar.classList.add("nav-hidden");
+      modalHeader.classList.add("header-hidden"); 
+
       window.clearTimeout(isScrolling);
+
       isScrolling = setTimeout(() => {
         navBar.classList.remove("nav-hidden");
+        modalHeader.classList.remove("header-hidden"); 
+
       }, 600);
     };
   } catch (err) {
@@ -700,6 +719,7 @@ refreshBtn.addEventListener("click", () => {
   if (searchInput) searchInput.value = "";
 });
 closeModal.addEventListener("click", () => {
+  document.querySelector(".modal-header").classList.remove("header-hidden");
   if (isReading) {
     fetchDetail(currentComicSlug);
   } else {
@@ -714,3 +734,4 @@ closeModal.addEventListener("click", () => {
 });
 
 document.addEventListener("DOMContentLoaded", initApp);
+
