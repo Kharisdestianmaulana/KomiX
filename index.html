@@ -17,9 +17,14 @@
   <body>
     <header>
       <div class="logo">Komi<span class="logo-x">X</span></div>
-      <button id="refreshBtn" class="icon-btn">
-        <i class="fa-solid fa-rotate-right"></i>
-      </button>
+      <div class="header-actions">
+        <button id="settingsBtn" class="icon-btn">
+          <i class="fa-solid fa-gear"></i>
+        </button>
+        <button id="refreshBtn" class="icon-btn">
+          <i class="fa-solid fa-rotate-right"></i>
+        </button>
+      </div>
     </header>
 
     <main>
@@ -160,6 +165,42 @@
       <div style="height: 80px"></div>
     </main>
 
+    <div id="settingsModal" class="settings-modal">
+      <div class="settings-content">
+        <div class="settings-header">
+          <h3>Pengaturan</h3>
+          <button id="closeSettings"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div class="settings-group">
+          <h4>Data & Penyimpanan</h4>
+          <div class="setting-item" onclick="confirmClear('history')">
+            <div class="setting-label">
+              <i class="fa-solid fa-clock-rotate-left"></i> Hapus Riwayat Baca
+            </div>
+            <i class="fa-solid fa-chevron-right"></i>
+          </div>
+          <div class="setting-item" onclick="confirmClear('bookmark')">
+            <div class="setting-label">
+              <i class="fa-solid fa-heart"></i> Hapus Semua Favorit
+            </div>
+            <i class="fa-solid fa-chevron-right"></i>
+          </div>
+          <div class="setting-item danger" onclick="confirmClear('all')">
+            <div class="setting-label">
+              <i class="fa-solid fa-trash"></i> Reset Total (Data Error)
+            </div>
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+        </div>
+
+        <div class="settings-footer">
+          <p>Versi Aplikasi 1.0.0 (Beta)</p>
+          <p>Dibuat oleh Riray</p>
+        </div>
+      </div>
+    </div>
+
     <nav class="bottom-nav">
       <div class="nav-item" id="navHistory">
         <i class="fa-solid fa-clock-rotate-left"></i>
@@ -186,7 +227,7 @@
     <button id="scrollTopBtn" class="scroll-top-btn">
       <i class="fa-solid fa-arrow-up"></i>
     </button>
-
+    <div id="toast" class="toast">Pesan Notifikasi</div>
     <script src="app.js"></script>
   </body>
 </html>
