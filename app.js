@@ -122,14 +122,12 @@ function saveHistory(comicData, chapterSlug) {
 
 function getLastRead(comicSlug) {
   let history = JSON.parse(localStorage.getItem("komik_history")) || {};
-  return history[comicSlug]; 
-
+  return history[comicSlug];
 }
 
 function getReadList(comicSlug) {
   let readList = JSON.parse(localStorage.getItem("komik_read_list")) || {};
-  return readList[comicSlug] || []; 
-
+  return readList[comicSlug] || [];
 }
 
 function getBookmarks() {
@@ -497,6 +495,9 @@ function renderTopComics(comics) {
 }
 
 async function fetchDetail(slug) {
+
+  modalContent.onscroll = null;
+
   isReading = false;
   currentComicSlug = slug;
   modal.classList.add("active");
@@ -597,40 +598,44 @@ async function fetchDetail(slug) {
             <div class="chapter-list" id="chapterList"></div>
         `;
 
-    document.getElementById("shareBtn").addEventListener("click", async () => {
-      const shareData = {
-        title: data.title,
-        text: `Baca komik ${data.title} gratis di KomiX!`,
-        url: window.location.href, 
+    const shareBtn = document.getElementById("shareBtn");
+    if (shareBtn) {
+      shareBtn.addEventListener("click", async () => {
+        const shareData = {
+          title: data.title,
+          text: `Baca komik ${data.title} gratis di KomiX!`,
+          url: window.location.href,
+        };
 
-      };
-
-      if (navigator.share) {
-        try {
-          await navigator.share(shareData);
-          showToast("Link berhasil dibagikan! 🚀");
-        } catch (err) {
-          console.log("Share dibatalkan");
+        if (navigator.share) {
+          try {
+            await navigator.share(shareData);
+            showToast("Link berhasil dibagikan! 🚀");
+          } catch (err) {
+            console.log("Share dibatalkan");
+          }
+        } else {
+          navigator.clipboard.writeText(window.location.href);
+          showToast("Link disalin ke clipboard! 📋");
         }
-      } else {
+      });
+    }
 
-        navigator.clipboard.writeText(window.location.href);
-        showToast("Link disalin ke clipboard! 📋");
-      }
-    });
-
-    document.getElementById("favBtn").addEventListener("click", function () {
-      const newStatus = toggleBookmark(currentComicData);
-      if (newStatus) {
-        this.classList.add("active");
-        this.innerHTML = '<i class="fa-solid fa-heart"></i>';
-        showToast("Ditambahkan ke Favorit ❤️");
-      } else {
-        this.classList.remove("active");
-        this.innerHTML = '<i class="fa-regular fa-heart"></i>';
-        showToast("Dihapus dari Favorit 💔");
-      }
-    });
+    const favBtn = document.getElementById("favBtn");
+    if (favBtn) {
+      favBtn.addEventListener("click", function () {
+        const newStatus = toggleBookmark(currentComicData);
+        if (newStatus) {
+          this.classList.add("active");
+          this.innerHTML = '<i class="fa-solid fa-heart"></i>';
+          showToast("Ditambahkan ke Favorit ❤️");
+        } else {
+          this.classList.remove("active");
+          this.innerHTML = '<i class="fa-regular fa-heart"></i>';
+          showToast("Dihapus dari Favorit 💔");
+        }
+      });
+    }
 
     const chapterContainer = document.getElementById("chapterList");
     const sortBtn = document.getElementById("sortBtn");
@@ -665,24 +670,28 @@ async function fetchDetail(slug) {
       });
     }
 
-    chapterSearchInput.addEventListener("input", (e) => {
-      const value = e.target.value.toLowerCase();
-      const items = chapterContainer.getElementsByClassName("chapter-item");
-      Array.from(items).forEach((item) => {
-        const text = item.innerText.toLowerCase();
-        item.style.display = text.includes(value) ? "flex" : "none";
+    if (chapterSearchInput) {
+      chapterSearchInput.addEventListener("input", (e) => {
+        const value = e.target.value.toLowerCase();
+        const items = chapterContainer.getElementsByClassName("chapter-item");
+        Array.from(items).forEach((item) => {
+          const text = item.innerText.toLowerCase();
+          item.style.display = text.includes(value) ? "flex" : "none";
+        });
       });
-    });
+    }
 
-    sortBtn.addEventListener("click", () => {
-      isAscending = !isAscending;
-      chapters.reverse();
-      sortBtn.innerHTML = isAscending
-        ? `<i class="fa-solid fa-arrow-up-wide-short"></i> Terlama`
-        : `<i class="fa-solid fa-arrow-down-wide-short"></i> Terbaru`;
-      renderChapterList();
-      chapterSearchInput.value = "";
-    });
+    if (sortBtn) {
+      sortBtn.addEventListener("click", () => {
+        isAscending = !isAscending;
+        chapters.reverse();
+        sortBtn.innerHTML = isAscending
+          ? `<i class="fa-solid fa-arrow-up-wide-short"></i> Terlama`
+          : `<i class="fa-solid fa-arrow-down-wide-short"></i> Terbaru`;
+        renderChapterList();
+        if (chapterSearchInput) chapterSearchInput.value = "";
+      });
+    }
     renderChapterList();
   } catch (err) {
     modalContent.innerHTML = `<div class="loading">Gagal memuat detail.<br><small>${err.message}</small></div>`;
@@ -720,7 +729,6 @@ async function fetchChapterImages(slug) {
     let htmlImages = `<div id="readingProgress" class="reader-progress-bar"></div><div class="reader-container">`;
 
     images.forEach((imgUrl) => {
-
       htmlImages += `
             <div class="img-placeholder">
                 <img src="${imgUrl}" 
@@ -866,10 +874,9 @@ async function initApp() {
   fetchRecommendedComics();
   fetchGenres();
   fetchComics(1);
-  const hash = window.location.hash.substring(1); 
+  const hash = window.location.hash.substring(1);
 
   if (hash) {
-
     console.log("Membuka link khusus:", hash);
     fetchDetail(hash);
   }
@@ -895,7 +902,7 @@ function confirmClear(type) {
     } else if (type === "all") {
       localStorage.clear();
       showToast("Aplikasi berhasil di-reset 🔄");
-      setTimeout(() => window.location.reload(), 1000); 
+      setTimeout(() => window.location.reload(), 1000);
 
       return;
     }
@@ -916,10 +923,8 @@ closeModal.addEventListener("click", () => {
   document.querySelector(".modal-header").classList.remove("header-hidden");
 
   if (isReading) {
-
     fetchDetail(currentComicSlug);
   } else {
-
     modal.classList.remove("active");
     currentComicSlug = "";
 
