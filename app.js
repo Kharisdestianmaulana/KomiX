@@ -34,6 +34,7 @@ let isReading = false;
 let currentPage = 1;
 let currentMode = "latest";
 let currentFilterSlug = "";
+let sliderInterval;
 
 settingsBtn.addEventListener("click", () => {
   settingsModal.classList.add("active");
@@ -462,15 +463,92 @@ function renderComics(comics, isAppend) {
 }
 
 async function fetchTopComics() {
-  topContainer.innerHTML = getCardSkeletonHTML(5);
+  const sliderContainer = document.getElementById("hero-slider");
+
+  sliderContainer.innerHTML = `<div class="skeleton" style="width:100%; height:100%;"></div>`;
+
   try {
     const res = await fetch(`${BASE_URL}/comic/bacakomik/top`);
     const json = await res.json();
-    if (json.success && json.komikList) renderTopComics(json.komikList);
-    else topContainer.innerHTML = "";
+    if (json.success && json.komikList) {
+      renderHeroSlider(json.komikList);
+    } else {
+      sliderContainer.innerHTML = "";
+    }
   } catch (err) {
-    topContainer.innerHTML = "";
+    console.error(err);
+    sliderContainer.innerHTML = "";
   }
+}
+
+function renderHeroSlider(comics) {
+  const sliderContainer = document.getElementById("hero-slider");
+  const dotsContainer = document.getElementById("hero-dots");
+
+  const top5 = comics.slice(0, 5);
+
+  sliderContainer.innerHTML = "";
+  dotsContainer.innerHTML = "";
+
+  top5.forEach((comic, index) => {
+    const hdCover = comic.cover.split("?")[0];
+
+    const slide = document.createElement("div");
+    slide.className = `hero-slide ${index === 0 ? "active" : ""}`;
+
+    slide.innerHTML = `
+            <img src="${hdCover}" class="hero-backdrop" alt="bg">
+            <div class="hero-content">
+                <img src="${hdCover}" class="hero-cover" alt="cover">
+                <div class="hero-info">
+                    <span class="hero-rank">TOP #${index + 1}</span>
+                    <div class="hero-title">${comic.title}</div>
+                    <div class="hero-rating"><i class="fa-solid fa-star"></i> ${
+                      comic.rating
+                    }</div>
+                </div>
+            </div>
+        `;
+
+    slide.addEventListener("click", () => fetchDetail(comic.slug));
+    sliderContainer.appendChild(slide);
+
+    const dot = document.createElement("div");
+    dot.className = `dot ${index === 0 ? "active" : ""}`;
+    dot.addEventListener("click", () => goToSlide(index));
+    dotsContainer.appendChild(dot);
+  });
+
+  startAutoSlide(top5.length);
+}
+
+function goToSlide(index) {
+  const slides = document.querySelectorAll(".hero-slide");
+  const dots = document.querySelectorAll(".dot");
+
+  slides.forEach((s) => s.classList.remove("active"));
+  dots.forEach((d) => d.classList.remove("active"));
+
+  if (slides[index]) slides[index].classList.add("active");
+  if (dots[index]) dots[index].classList.add("active");
+
+  clearInterval(sliderInterval);
+  startAutoSlide(slides.length);
+}
+
+function startAutoSlide(total) {
+  clearInterval(sliderInterval);
+  sliderInterval = setInterval(() => {
+    const activeSlide = document.querySelector(".hero-slide.active");
+    if (!activeSlide) return;
+
+    const slides = Array.from(document.querySelectorAll(".hero-slide"));
+    let currentIndex = slides.indexOf(activeSlide);
+
+    let nextIndex = (currentIndex + 1) % total;
+
+    goToSlide(nextIndex);
+  }, 5000);
 }
 
 function renderTopComics(comics) {
@@ -495,7 +573,6 @@ function renderTopComics(comics) {
 }
 
 async function fetchDetail(slug) {
-
   modalContent.onscroll = null;
 
   isReading = false;
@@ -943,4 +1020,3 @@ closeModal.addEventListener("click", () => {
 });
 
 document.addEventListener("DOMContentLoaded", initApp);
-
