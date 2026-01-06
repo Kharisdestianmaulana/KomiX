@@ -1457,3 +1457,129 @@ footer {
   color: var(--text-muted);
 }
 
+.hero-section {
+  position: relative;
+  width: 100%;
+  height: 220px; 
+  margin-bottom: 20px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+
+.hero-slider {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.hero-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background-color: var(--bg-surface);
+}
+
+.hero-slide.active {
+  opacity: 1;
+  z-index: 5;
+}
+
+.hero-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(15px) brightness(0.4);
+  transform: scale(1.1); 
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  gap: 15px;
+  padding: 20px;
+  width: 100%;
+  align-items: flex-end;
+  background: linear-gradient(to top, var(--bg-dark), transparent 90%);
+  height: 100%;
+}
+
+.hero-cover {
+  width: 100px;
+  height: 140px;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.hero-info {
+  flex: 1;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.hero-rank {
+  background-color: var(--accent);
+  color: #000;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 5px;
+}
+
+.hero-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 5px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.hero-rating {
+  font-size: 0.8rem;
+  color: #fbbf24;
+  font-weight: 600;
+}
+
+.hero-dots {
+  position: absolute;
+  bottom: 10px;
+  right: 15px;
+  display: flex;
+  gap: 6px;
+  z-index: 20;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.dot.active {
+  background: var(--accent);
+  width: 20px; 
+  border-radius: 10px;
+}
+
